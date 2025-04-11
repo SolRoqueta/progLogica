@@ -64,7 +64,8 @@ pertenece_veces_aux(_, [], Acumulador, Acumulador).
 pertenece_veces_aux(X, [X|T], Acumulador, Veces) :-
     NuevoAcum is Acumulador + 1,
     pertenece_veces_aux(X, T, NuevoAcum, Veces).
-pertenece_veces_aux(X, [_|T], Acumulador, Veces) :-
+pertenece_veces_aux(X, [Y|T], Acumulador, Veces) :-
+    Y \= X,
     pertenece_veces_aux(X, T, Acumulador, Veces).
 % hasta aca
 
