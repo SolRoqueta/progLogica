@@ -19,6 +19,7 @@ elegir_primero(X, L, Res) :-
 elegir_primero_acum(_, [], Acc, Acc).
 
 elegir_primero_acum(X, [X|T], Acc, Res) :-
+
     append(Acc, T, Res).
 
 elegir_primero_acum(X, [H|T], Acc, Res) :-
@@ -41,3 +42,27 @@ pares_acum([H|T], Acc, Res) :-
 pares_acum([H|T], Acc, Res) :-
     H mod 2 =\= 0,
     pares_acum(T, Acc, Res).
+
+
+% borrar luego
+
+% pertenece_veces(_, [], 0).
+% pertenece_veces(X, [X|R], N) :-
+%     pertenece_veces(X, R, N1),
+%     N is N1 + 1.
+% pertenece_veces(X, [_|R], N) :-
+%     pertenece_veces(X, R, N).
+
+pertenece_veces(X, Lista, Veces) :-
+    pertenece_veces_aux(X, Lista, 0, Veces).
+
+
+pertenece_veces_aux(_, [], Acumulador, Acumulador).
+pertenece_veces_aux(X, [X|T], Acumulador, Veces) :-
+    NuevoAcum is Acumulador + 1,
+    pertenece_veces_aux(X, T, NuevoAcum, Veces).
+pertenece_veces_aux(X, [_|T], Acumulador, Veces) :-
+    pertenece_veces_aux(X, T, Acumulador, Veces).
+
+
+
