@@ -51,3 +51,16 @@ asignar([X|Resto], Palabras) :- member(X, Palabras), asignar(Resto, Palabras).
 palabras_de_largo(N, Palabra) :- palabra(Palabra), length(Palabra, N).
 
 todas_palabras_validas(N, Lista) :- findall(P, palabras_de_largo(N, P), Lista).
+
+
+intercaladas([], [], []).
+intercaladas([F1|R1], [F2|R2], [F1, F2 | R]) :-
+    intercaladas(R1, R2, R).
+
+cruzadas2(N, T) :-
+    matriz(N, T),                  
+    todas_palabras_validas(N, Palabras),
+    transpuesta(T, T2),             
+    intercaladas(T, T2, Inter),     
+    asignar(Inter, Palabras).       
+
