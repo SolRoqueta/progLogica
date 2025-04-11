@@ -11,6 +11,3 @@ no_pertenece(_,[]).
 no_pertenece(X,[Y|L]) :- X \= Y, no_pertenece(X,L).
 
 unico(X, L) :- select(X, L, R), no_pertenece(X,R).
-
-columna([], [], []).
-columna([[H|T]|Filas], [H|Columna], [T|Resto]) :- columna(Filas, Columna, Resto).s
