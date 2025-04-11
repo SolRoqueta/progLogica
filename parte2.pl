@@ -43,17 +43,11 @@ cruzadas(N, T) :- matriz(N, T),
     todas_palabras_validas(N, Palabras),
     asignar(T, Palabras),
     transpuesta(T, Traspuesta),
-    llenar_filas(Traspuesta, N). 
+    asignar(Traspuesta, Palabras). 
 
-asignar([],_).
+asignar([], _).
 asignar([X|Resto], Palabras) :- member(X, Palabras), asignar(Resto, Palabras).
 
 palabras_de_largo(N, Palabra) :- palabra(Palabra), length(Palabra, N).
 
-llenar_filas([],_).
-llenar_filas([Fila|Rest], N) :-
-    palabras_de_largo(Fila, N), 
-    llenar_filas(Rest, N).
-
-todas_palabras_validas(N, Lista) :-
-    findall(P, palabras_de_largo(N, P), Lista).
+todas_palabras_validas(N, Lista) :- findall(P, palabras_de_largo(N, P), Lista).
