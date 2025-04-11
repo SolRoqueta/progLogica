@@ -10,4 +10,4 @@ columnas([X|Filas],N):-
     columnas(Filas,N).
 
 
-% matriz(N,X):- lenght(X,N), columnas(X,N).
+matriz(N,X):- lenght(X,N), columnas(X,N).
