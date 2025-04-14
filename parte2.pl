@@ -32,12 +32,19 @@ columna([[H|T]|Filas], [H|Columna], [T|Resto]) :- columna(Filas, Columna, Resto)
 transpuesta([[]|_],[]).
 transpuesta(M, [C|T]) :- columna(M, C, R), transpuesta(R, T).
 
+
+length_acc([], 0).
+length_acc([_|T], N) :-
+    N > 0,
+    N1 is N - 1,
+    length_acc(T, N1).
+
 columnas([],_).
 columnas([X|Filas],N):-
-    length(X,N),
+    length_acc(X,N),
     columnas(Filas,N).
 
-matriz(N,X):- length(X, N), columnas(X, N).
+matriz(N,X):- length_acc(X, N), columnas(X, N).
 
 cruzadas(N, T) :- matriz(N, T),
     todas_palabras_validas(N, Palabras),
