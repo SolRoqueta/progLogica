@@ -1,7 +1,7 @@
 es_par(N) :- N mod 2 =:= 0. %predicado para saber si un numero es par
 es_impar(N) :- N mod 2 =\= 0. %predicado para saber si un numero es par
 
-%predicado que retirna una lista con los lares y otra con los impares
+%predicado que retorna una lista con los pares y otra con los impares
 pares_impares_acc([], AcP, AcP, AcI, AcI).
 pares_impares_acc([X|L], AcP, [X|R], AcI, R2) :- es_par(X), pares_impares_acc(L, AcP, R, AcI, R2).
 pares_impares_acc([X|L], AcP, R, AcI, [X|R2]) :- es_impar(X), pares_impares_acc(L, AcP, R, AcI, R2).
@@ -46,15 +46,11 @@ pares_acum([H|T], Acc, Res) :-
     H mod 2 =\= 0,
     pares_acum(T, Acc, Res).
 
+repetido(X, [X|R]) :-
+    pertenece(X, R).
+repetido(X, [_|R]) :-
+    repetido(X, R).
 
-% borrar luego
-
-% pertenece_veces(_, [], 0).
-% pertenece_veces(X, [X|R], N) :-
-%     pertenece_veces(X, R, N1),
-%     N is N1 + 1.
-% pertenece_veces(X, [_|R], N) :-
-%     pertenece_veces(X, R, N).
 
 pertenece_veces(X, Lista, Veces) :-
     pertenece_veces_aux(X, Lista, 0, Veces).
@@ -67,7 +63,6 @@ pertenece_veces_aux(X, [X|T], Acumulador, Veces) :-
 pertenece_veces_aux(X, [Y|T], Acumulador, Veces) :-
     Y \= X,
     pertenece_veces_aux(X, T, Acumulador, Veces).
-% hasta aca
 
 
 ordenada([], []).  
