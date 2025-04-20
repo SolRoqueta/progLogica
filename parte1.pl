@@ -16,45 +16,33 @@ no_pertenece(X,[Y|L]) :- X \= Y, no_pertenece(X,L).
 unico(X, L) :- select(X, L, R), no_pertenece(X,R).
 
 %Predicado elegir primer elemento
-elegir_primero(X, L, Res) :-
-    elegir_primero_acum(X, L, [], Res).
+elegir_primero(X, L, Res) :- elegir_primero_acum(X, L, [], Res).
     
 elegir_primero_acum(_, [], Acc, Acc).
-
-elegir_primero_acum(X, [X|T], Acc, Res) :-
-
-    append(Acc, T, Res).
-
+elegir_primero_acum(X, [X|T], Acc, Res) :- append(Acc, T, Res).
 elegir_primero_acum(X, [H|T], Acc, Res) :-
     H \= X,
     append(Acc, [H], Acc1),
     elegir_primero_acum(X, T, Acc1, Res).
 
-
 %Predicado pares
-pares(L, Res) :-
-    pares_acum(L, [], Res).
+pares(L, Res) :- pares_acum(L, [], Res).
 
 pares_acum([], Acc, Acc).
-
 pares_acum([H|T], Acc, Res) :-
     H mod 2 =:= 0,
     append(Acc, [H], Acc1),
     pares_acum(T, Acc1, Res).
-
 pares_acum([H|T], Acc, Res) :-
     H mod 2 =\= 0,
     pares_acum(T, Acc, Res).
 
-repetido(X, [X|R]) :-
-    pertenece(X, R).
-repetido(X, [_|R]) :-
-    repetido(X, R).
+%predicado si un elemento esta repetido en una lista
+repetido(X, [X|R]) :- pertenece(X, R).
+repetido(X, [_|R]) :- repetido(X, R).
 
-
-pertenece_veces(X, Lista, Veces) :-
-    pertenece_veces_aux(X, Lista, 0, Veces).
-
+%predicado que devuelve la cantidad de ocurrencias de un elemento en una lista
+pertenece_veces(X, Lista, Veces) :- pertenece_veces_aux(X, Lista, 0, Veces).
 
 pertenece_veces_aux(_, [], Acumulador, Acumulador).
 pertenece_veces_aux(X, [X|T], Acumulador, Veces) :-
@@ -64,22 +52,25 @@ pertenece_veces_aux(X, [Y|T], Acumulador, Veces) :-
     Y \= X,
     pertenece_veces_aux(X, T, Acumulador, Veces).
 
-
+%predicado que devuelve la lista ordenada de menor a mayor
 ordenada([], []).  
 ordenada(L1, L2) :- seleccion(L1, L2).
 
+%predicado auxiliar para ordenada
 seleccion(L, [Min|Ordenada]) :- minimoEf(L, Min), eliminar(Min, L, RestoSinMin), ordenada(RestoSinMin, Ordenada).  
 
+%encuentra el minimo de lo que va quedando de lista
 minimo_ac([],Ac,Ac). 
 minimo_ac([X|L],Ac, M) :- X < Ac, minimo_ac(L,X,M).
 minimo_ac([X|L],Ac,M) :- X >= Ac, minimo_ac(L,Ac,M).
 
 minimoEf([X|L],M) :- minimo_ac(L,X,M).
 
-
+%elimina el minimo de la lista
 eliminar(_, [], []). 
 eliminar(X, [X|L], L). 
 eliminar(X, [Y|L], [Y|LRestante]) :- X \= Y, eliminar(X, L, LRestante).  
 
+%predicado que retorna si un elemento pertenece a una lista
 pertenece(X,[X|_]).
 pertenece(X,[_|L]) :- pertenece(X,L).
