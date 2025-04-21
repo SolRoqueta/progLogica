@@ -127,5 +127,11 @@ cruzadas2(N, T) :-
     intercaladas(T, T2, Inter),     
     cargar_palabras(Inter, Inter). 
 
-%PARTE 2.3
-%
+/*PARTE 2.3
+Luego de realizar pruebas, se pudo observar que cruzadas2 es mas eficiente que cruzadas.
+Utilizamos el diccionario grande para los siguientes ejemplos.
+Para N=3 cruzadas tardo 423135 inferencias y 51.395 segundos en dar una respuesta cuando cruzadas2 tardo 48 inferencias y 0.002 segundos
+Para N=4 cruzadas tardo XXXX inferencias y XXXXX segundos en dar una respuesta cuando cruzadas2 tardo XXXX inferencias y XXX segundos
+Esto se debe a que cruzadas2 al cargar palabras ya validas en la lista intercalada que contiene las filas y las columnas de la matriz,
+no es necesario trasponer esta y verificar que sus filas contengan una palabra valida, proceso que si realiza cruzadas ya que
+las palabras validas son cargadas unicamente en sus filas y luego se verifican las columnas.*/
