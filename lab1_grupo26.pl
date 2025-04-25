@@ -40,7 +40,7 @@ pertenece_veces_aux(X, [Y|T], Acumulador, Veces) :-
     Y \= X,
     pertenece_veces_aux(X, T, Acumulador, Veces).
 
-%Predicado pares
+%Predicado que retorna una lista con los elementos pares en orden de aparicion
 pares(L, Res) :- pares_acum(L, [], Res).
 
 pares_acum([], Acc, Acc).
@@ -52,7 +52,7 @@ pares_acum([H|T], Acc, Res) :-
     H mod 2 =\= 0,
     pares_acum(T, Acc, Res).
 
-%predicado que retorna una lista con los pares y otra con los impares
+%predicado que retorna una lista con los  elementos pares y otra con los impares en orden de aparicion
 pares_impares_acc([], AcP, AcP, AcI, AcI).
 pares_impares_acc([X|L], AcP, [X|R], AcI, R2) :- es_par(X), pares_impares_acc(L, AcP, R, AcI, R2).
 pares_impares_acc([X|L], AcP, R, AcI, [X|R2]) :- es_impar(X), pares_impares_acc(L, AcP, R, AcI, R2).
@@ -84,9 +84,9 @@ eliminar(X, [Y|L], [Y|LRestante]) :- X \= Y, eliminar(X, L, LRestante).
 columna([], [], []).
 columna([[H|T]|Filas], [H|Columna], [T|Resto]) :- columna(Filas, Columna, Resto).
 
-%transpuesta de una matriz
-transpuesta([[]|_],[]).
-transpuesta(M, [C|T]) :- columna(M, C, R), transpuesta(R, T).
+%traspuesta de una matriz
+traspuesta([[]|_],[]).
+traspuesta(M, [C|T]) :- columna(M, C, R), traspuesta(R, T).
 
 columnas([],_).
 columnas([X|Filas],N):-
@@ -97,10 +97,10 @@ columnas([X|Filas],N):-
 matriz(N,X):- length(X, N), columnas(X, N).
 
 %genera la matriz NxN con palabras validas en sus filas y columnas
-cruzadas(N, T) :-
+cruzadas1(N, T) :-
     matriz(N, T),
     cargar_palabras(T, T),
-    transpuesta(T,Tansp),
+    traspuesta(T,Tansp),
     todas_las_filas_validas(Tansp).
 
 %carga las palabras validas en las filas de la matriz
@@ -123,7 +123,7 @@ intercaladas([F1|R1], [F2|R2], [F1, F2 | R]) :-
 %genera la matriz NxN con palabras validas en sus filas y columnas
 cruzadas2(N, T) :-
     matriz(N, T),
-    transpuesta(T, T2),             
+    traspuesta(T, T2),             
     intercaladas(T, T2, Inter),     
     cargar_palabras(Inter, Inter). 
 
