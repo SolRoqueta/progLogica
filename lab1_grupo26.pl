@@ -1,8 +1,16 @@
-%predicados auxiliares
-es_par(N) :- N mod 2 =:= 0. %predicado para saber si un numero es par
-es_impar(N) :- N mod 2 =\= 0. %predicado para saber si un numero es par
+/*
+INTEGRANTES:
+-Adrian Omero
+-Agustina Aldunate
+-Luciano Lacurcia
+-Sol Roqueta
+*/
 
-%predicado auxiliar no pertenece
+%predicados auxiliares
+es_par(N) :- N mod 2 =:= 0. %predicado que retorna si un numero es par
+es_impar(N) :- N mod 2 =\= 0. %predicado que retorna si un numero es impar
+
+%predicado auxiliar que retorna si un elemento no pertenece a una lista
 no_pertenece(_,[]).
 no_pertenece(X,[Y|L]) :- X \= Y, no_pertenece(X,L).
 
@@ -12,10 +20,10 @@ no_pertenece(X,[Y|L]) :- X \= Y, no_pertenece(X,L).
 pertenece(X,[X|_]).
 pertenece(X,[_|L]) :- pertenece(X,L).
 
-%predicado que se fija si un elemento aparece una unica vez
+%predicado que se fija si un elemento aparece una unica vez en una lista
 unico(X, L) :- select(X, L, R), no_pertenece(X,R).
 
-%Predicado elegir primer elemento
+%Predicado que retorna en Res la lista L sin la primera ocurrencia de X
 elegir_primero(X, L, Res) :- elegir_primero_acum(X, L, [], Res).
     
 elegir_primero_acum(_, [], Acc, Acc).
@@ -88,6 +96,7 @@ columna([[H|T]|Filas], [H|Columna], [T|Resto]) :- columna(Filas, Columna, Resto)
 traspuesta([[]|_],[]).
 traspuesta(M, [C|T]) :- columna(M, C, R), traspuesta(R, T).
 
+%genera la matriz vacia de tamaño NxN
 columnas([],_).
 columnas([X|Filas],N):-
     length(X,N),
