@@ -1,6 +1,6 @@
 % Crear una fila de N columnas, todas con c(no, no, ninguno)
 crear_fila(0, []) :- !.
-crear_fila(1, [c(-, 0, 0) | Resto]) :-
+crear_fila(1, [c(-, 0, -) | Resto]) :-
     crear_fila(0, Resto), !.
 crear_fila(N, [c(0, 0, 0) | Resto]) :-
     N1 is N - 1,
@@ -8,7 +8,7 @@ crear_fila(N, [c(0, 0, 0) | Resto]) :-
 
 crear_ulimta_fila(0, []) :- !.
 crear_ulimta_fila(1, []) :- !.
-crear_ulimta_fila(N, [c(0, -, 0) | Resto]) :-
+crear_ulimta_fila(N, [c(0, -, -) | Resto]) :-
     N1 is N - 1,
     crear_ulimta_fila(N1, Resto). 
 
@@ -26,7 +26,7 @@ crear_filas(N, C, [Fila | Resto]) :-
 
 % Predicado principal: crea un tablero N x N con celdas inicializadas
 tablero(N, Tablero) :-
-    crear_filas(N+1, N+1, Filas),
+    crear_filas(N, N, Filas),
     Tablero =.. [m | Filas].
 
 
