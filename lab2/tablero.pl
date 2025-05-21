@@ -7,7 +7,7 @@ crear_fila(N, [c(0, 0, 0) | Resto]) :-
     crear_fila(N1, Resto).
 
 crear_ulimta_fila(0, []) :- !.
-crear_ulimta_fila(1, []) :- !.
+crear_ulimta_fila(1, [c(-, -, -)]) :- !.
 crear_ulimta_fila(N, [c(0, -, -) | Resto]) :-
     N1 is N - 1,
     crear_ulimta_fila(N1, Resto). 
