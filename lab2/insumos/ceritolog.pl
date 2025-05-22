@@ -11,7 +11,7 @@ fin_del_juego/4, % fin_del_juego(+Tablero,?P1,?P2,?Ganador)
 % ganó, en el formato: “Gana el jugador 1”, “Gana el jugador 2”, o “Empate”.
 % En caso de que no sea el fin del juego, el predicado falla.
  
-% jugada_humano/8, % jugada_humano(+Tablero,+Turno,+F,+C,+D,?Tablero2,?Turno2,?Celdas)
+jugada_humano/8, % jugada_humano(+Tablero,+Turno,+F,+C,+D,?Tablero2,?Turno2,?Celdas)
 % Se le envía un tablero, de quién es el turno (1 o 2) y la línea elegida por el
 % jugador humano con las variables F-C-D, y devuelve: el tablero modificado con
 % la línea marcada (y celdas marcadas en caso de que sea necesario), de quién es
@@ -63,26 +63,70 @@ tablero(N, Tablero) :-
 
 
 
-% tablero(_,[]).
-
+% --- fin de juego
 fin_del_juego(_,_,_,_):-fail.
 
+comparar(P1, P2, "Empate") :- P1 =:= P2, !.
+comparar(P1, P2, "Gana el jugador 1") :- P1 > P2, !.
+comparar(P1, P2, "Gana el jugador 2") :- P2 > P1, !.
+
+
+% 
+contar_celdas_fila([], 0, 0).
+
+contar_celdas_fila([c(H, V, 0) | _], _, _) :-
+    H \== (-), V \== (-), !, fail.
+
+contar_celdas_fila([c(H, V, 1) | Resto], P1, P2) :-
+    H \== (-), V \== (-),
+    contar_celdas_fila(Resto, P1R, P2),
+    P1 is P1R + 1.
+
+contar_celdas_fila([c(H, V, 2) | Resto], P1, P2) :-
+    H \== (-), V \== (-),
+    contar_celdas_fila(Resto, P1, P2R),
+    P2 is P2R + 1.
+
+contar_celdas_fila([_ | Resto], P1, P2) :-
+    contar_celdas_fila(Resto, P1, P2).
+
+
+% suma las celdas capturadas por cada jugador
+contar_celdas([], 0, 0).
+contar_celdas([Fila | Resto], P1, P2) :-
+    Fila =.. [f | Celdas], %descompone para tener lista de celdas
+    contar_celdas_fila(Celdas, PF1, PF2), %contar puntos de cada celda
+    contar_celdas(Resto, PR1, PR2), %recursion
+    P1 is PF1 + PR1,
+    P2 is PF2 + PR2.
+
+finalizar_juego(Tablero, P1, P2, Ganador) :-
+    Tablero =.. [m | Filas],      % descompone el término Tablero en lista de filas
+    contar_celdas(Filas, P1, P2), % suma los puntos
+    comparar(P1, P2, Ganador),    % determina quién ganó
+    !.                            % <-- corte: evita más soluciones
+
+
+% ----- fin de juego
 % ------ jugada humano
+% jugada_humano(+Tablero,+Turno,+F,+C,+D,?Tablero2,?Turno2,?Celdas)
 % jugada_humano(+Tablero,+Turno,+F,+C,+D,?Tablero2,?Turno2,?Celdas)
 cambiar_turno(1, 2).
 cambiar_turno(2, 1).
 
 % Caso primer Fila, jugada horizontal (no chequear celda superior) caso ya pintada arista, falla
 jugada_humano(Tablero,_,F,C,D,_,_,_) :-
+    write("jugada humano 1"),
     F =:= 1,
-    D =:= "H",
+    D == "h",
     obtener_datos_celda(Tablero, F, C, Sup, _,_,_),
     Sup =:= 1, fail.
 
 % Caso primer Fila, jugada horizontal (no chequear celda superior) caso OK, pinta arista y pero no celda
 jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
+    write("jugada humano 2"),
     F =:= 1,
-    D =:= "H",
+    D == "h",
     obtener_datos_celda(Tablero, F, C, Sup, Izq, Inf, Der),
     Sup =:= 0, 
     Izq + Der + Inf =\= 3,
@@ -94,8 +138,10 @@ jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
     
 % Caso primer Fila, jugada horizontal (no chequear celda superior) caso OK, pinta arista y celda
 jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :- 
+    write("jugada humano 3"),
     F =:= 1,
-    D =:= "H",
+    F =:= 1,
+    D == "h",
     obtener_datos_celda(Tablero, F, C, Sup, Izq, Inf, Der),
     Sup =:= 0, 
     Izq + Der + Inf  =:= 3,
@@ -109,15 +155,17 @@ jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
 
 % Caso primer Columna, jugada vertical (no chequear celda derecha) caso ya pintada arista, falla
 jugada_humano(Tablero,_,F,C,D,_,_,_) :-
+    write("jugada humano 4"),
     C == 1,
-    D == 'V',
+    D == 'v',
     obtener_datos_celda(Tablero, F, C, _, Izq, _,_),
     Izq =:= 1, fail.
 
 % Caso primer Columna, jugada vertical (no chequear celda derecha) caso OK, pinta arista pero no celda.
 jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
+    write("jugada humano 5"),
     C == 1,
-    D == 'V',
+    D == 'v',
     obtener_datos_celda(Tablero, F, C, Sup, Izq, Inf, Der),
     Izq =:= 0,
     Sup + Der + Inf =\= 3,
@@ -129,8 +177,9 @@ jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
 
 % Caso primer Columna, jugada vertical (no chequear celda derecha) caso OK, pinta arista y celda.
 jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
+    write("jugada humano 6"),
     C == 1,
-    D == 'V',
+    D == 'v',
     obtener_datos_celda(Tablero, F, C, Sup, Izq, Inf, Der),
     Izq =:= 0,
     Sup + Der + Inf =:= 3,
@@ -142,15 +191,17 @@ jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
 
 % Caso general vertical falla, arista ya pintada
 jugada_humano(Tablero,_,F,C,D,_,_,_) :-
+    write("jugada humano 7"),
     C =:= 1,
-    D == 'V',
+    D == 'v',
     obtener_datos_celdas_jugada_completa_vertical(Tablero, F, C, D, Med, _,_,_,_,_,_),
     Med =:= 0, fail.
 
 % Caso general vertical pinta arista, no celda
 jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
+    write("jugada humano 8"),
     C =:= 1,
-    D == 'V',
+    D == 'v',
     obtener_datos_celdas_jugada_completa_vertical(Tablero, F, C, D, _, SupIzq, SupDer, Der, InfDer, InfIzq, Izq),
     SupDer + Der + InfDer =:= 3,
     SupIzq + Izq + InfIzq =:= 3,
@@ -163,8 +214,9 @@ jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
    
 % Caso general vertical pinta arista, una celda derecha
 jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
+    write("jugada humano 9"),
     C =:= 1,
-    D == 'V',
+    D == 'v',
     obtener_datos_celdas_jugada_completa_vertical(Tablero, F, C, D, _, SupIzq, SupDer, Der, InfDer, InfIzq, Izq),
     SupDer + Der + InfDer == 3,
     SupIzq + Izq + InfIzq =:= 3,
@@ -177,43 +229,49 @@ jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
 
 % Caso general vertical pinta arista, una celda izquierda
 jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
+    write("jugada humano 10"),
     C =:= 1,
-    D == 'V',
+    D == 'v',
     obtener_datos_celdas_jugada_completa_vertical(Tablero, F, C, D, _, SupIzq, SupDer, Der, InfDer, InfIzq, Izq),
     SupDer + Der + InfDer =:= 3,
     SupIzq + Izq + InfIzq == 3,
     set_datos_celda(Tablero, F, C, Izq, 1),
-    set_jugador(Tablero, F, C-1, Turno),
+    C1 is C - 1,
+    set_jugador(Tablero, F, C1, Turno),
     Tablero2 = Tablero,
     Turno2 = Turno,
-    Celdas = [[F,C-1]].
+    Celdas = [[F,C1]].
 
 % Caso general vertical pinta arista, dos celdas
 jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
+    write("jugada humano 11"),
     C =:= 1,
-    D == 'V',
+    D == 'v',
     obtener_datos_celdas_jugada_completa_vertical(Tablero, F, C, D, _, SupIzq, SupDer, Der, InfDer, InfIzq, Izq),
     SupDer + Der + InfDer == 3,
     SupIzq + Izq + InfIzq == 3,
     set_datos_celda(Tablero, F, C, Izq, 1),
-    set_jugador(Tablero, F, C-1, Turno),
+    C1 is C - 1,
+    set_jugador(Tablero, F, C1, Turno),
     set_jugador(Tablero, F, C, Turno),
     Tablero2 = Tablero,
     Turno2 = Turno,
-    Celdas = [[F,C-1],[F,C]].
+    Celdas = [[F,C1],[F,C]].
 
 
 % Caso general horizontal falla, arista ya pintada
 jugada_humano(Tablero,_,F,C,D,_,_,_) :-
+    write("jugada humano 12"),
     F =:= 1,
-    D == 'H',
+    D == 'v',
     obtener_datos_celdas_jugada_completa_horizontal(Tablero, F, C, D, Med, _,_,_,_,_,_),
     Med =:= 0, fail.
 
 % Caso general horizonal pinta arista, no celda
 jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
+    write("jugada humano 13"),
     F =:= 1,
-    D == 'H',
+    D == 'h',
     obtener_datos_celdas_jugada_completa_horizontal(Tablero, F, C, D, _, IzqInf, Inf, DerInf, IzqSup, Sup, DerSup),
     Sup + IzqSup + DerSup =:= 3,
     Inf + IzqInf + DerInf =:= 3,
@@ -226,8 +284,9 @@ jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
    
 % Caso general horizontal pinta arista, una celda inferior
 jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
+    write("jugada humano 14"),
     F =:= 1,
-    D == 'H',
+    D == 'h',
     obtener_datos_celdas_jugada_completa_horizontal(Tablero, F, C, D, _, IzqInf, Inf, DerInf, IzqSup, Sup, DerSup),
     Sup + IzqSup + DerSup =:= 3,
     Inf + IzqInf + DerInf == 3,
@@ -240,44 +299,50 @@ jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
 
 % Caso general horizontal pinta arista, una celda superior
 jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
+    write("jugada humano 15"),
     F =:= 1,
-    D == 'H',
+    D == 'h',
     obtener_datos_celdas_jugada_completa_horizontal(Tablero, F, C, D, _, IzqInf, Inf, DerInf, IzqSup, Sup, DerSup),
     Sup + IzqSup + DerSup == 3,
     Inf + IzqInf + DerInf =:= 3,
     set_datos_celda(Tablero, F, C, Sup, 1),
-    set_jugador(Tablero, F-1, C, Turno),
+    F1 is F - 1,
+    set_jugador(Tablero, F1, C, Turno),
     Tablero2 = Tablero,
     Turno2 = Turno,
-    Celdas = [[F-1,C]].
+    Celdas = [[F1,C]].
 
 % Caso general horizonal pinta arista, dos celdas
 jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
+    write("jugada humano 16"),
     F =:= 1,
-    D == 'H',
+    D == 'h',
     obtener_datos_celdas_jugada_completa_horizontal(Tablero, F, C, D, _, IzqInf, Inf, DerInf, IzqSup, Sup, DerSup),
     Sup + IzqSup + DerSup == 3,
     Inf + IzqInf + DerInf == 3,
     set_datos_celda(Tablero, F, C, Sup, 1),
     set_jugador(Tablero, F, C, Turno),
-    set_jugador(Tablero, F-1, C, Turno),
+    F1 is F - 1,
+    set_jugador(Tablero, F1, C, Turno),
     Tablero2 = Tablero,
     Turno2 = Turno,
-    Celdas = [[F-1,C],[F,C]].
+    Celdas = [[F1,C],[F,C]].
 
 
 
 obtener_datos_celdas_jugada_completa_vertical(Tablero, F, C, D, Med, SupIzq, SupDer, Der, InfDer, InfIzq, Izq) :-
     compound(Tablero),
-    D == 'V',
+    D == 'v',
+    C1 is C - 1,
     obtener_datos_celda(Tablero, F,   C, SupDer, Med, InfDer, Der),
-    obtener_datos_celda(Tablero, F, C-1, SupIzq, Izq, InfIzq,   _).
+    obtener_datos_celda(Tablero, F, C1, SupIzq, Izq, InfIzq,   _).
 
 obtener_datos_celdas_jugada_completa_horizontal(Tablero, F, C, D, Med, IzqInf, Inf, DerInf, IzqSup, Sup, DerSup) :-
     compound(Tablero),
-    D == 'H',
+    D == 'h',
+    F1 is F - 1,
     obtener_datos_celda(Tablero, F,   C,       Med,    IzqInf,    Inf, DerInf),
-    obtener_datos_celda(Tablero, F-1, C, Sup, IzqSup, _, DerSup).
+    obtener_datos_celda(Tablero, F1, C, Sup, IzqSup, _, DerSup).
 
 % obtener_datos_celda(+Tablero, +F, +C, ?Sup, ?Izq, ?Inf, ?Der) me da las 4 aristas de una celda
 obtener_datos_celda(Tablero, F, C, Sup, Izq, Inf, Der) :-
@@ -286,10 +351,12 @@ obtener_datos_celda(Tablero, F, C, Sup, Izq, Inf, Der) :-
     arg(C, Fila,Celda),
     arg(1, Celda, Sup),
     arg(2, Celda, Izq),
-    arg(F+1, Tablero, FilaInf),
+    F1 is F + 1,
+    arg(F1, Tablero, FilaInf),
     arg(C, FilaInf,CeldaInf),
     arg(1, CeldaInf, Inf),
-    arg(C+1, Fila,CeldaDer),
+    C1 is C + 1,
+    arg(C1, Fila,CeldaDer),
     arg(2, CeldaDer, Der).
 
 set_datos_celda(Tablero, F, C, Sup, Izq) :-
@@ -304,7 +371,6 @@ set_jugador(Tablero, F, C, Turno) :-
     arg(F, Tablero, Fila),
     arg(C, Fila,Celda),
     setarg(3, Celda, Turno).
-
 % --------
 
 
@@ -315,3 +381,5 @@ set_jugador(Tablero, F, C, Turno) :-
 jugada_maquina(_,_,_,_,_,_,_,_,_):-fail.
 
 sugerencia_jugada(_,_,_,_,_,_):-fail.
+
+
