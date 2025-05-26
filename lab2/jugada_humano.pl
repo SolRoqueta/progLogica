@@ -352,12 +352,14 @@ obtener_datos_celdas_jugada_completa_horizontal(Tablero, F, C, D, Med, IzqInf, I
 
 % obtener_datos_celda(+Tablero, +F, +C, ?Sup, ?Izq, ?Inf, ?Der) me da las 4 aristas de una celda
 obtener_datos_celda(Tablero, F, C, Sup, Izq, Inf, Der) :-
-    % write("obtener datos celda"),
+    write("obtener datos celda"),
     compound(Tablero),
     arg(F, Tablero, Fila),
     arg(C, Fila,Celda),
     arg(1, Celda, Sup),
     arg(2, Celda, Izq),
+    Sup =\= -1,
+    Izq =\= -1,
     F1 is F + 1,
     arg(F1, Tablero, FilaInf),
     arg(C, FilaInf,CeldaInf),
@@ -365,6 +367,38 @@ obtener_datos_celda(Tablero, F, C, Sup, Izq, Inf, Der) :-
     C1 is C + 1,
     arg(C1, Fila,CeldaDer),
     arg(2, CeldaDer, Der),
+    format(
+      'DEBUG celda: celda(F=~w, C=~w) -> Sup=~w, Izq=~w, Inf=~w, Der=~w~n',
+      [F, C, Sup, Izq, Inf, Der]
+    ).
+
+obtener_datos_celda(Tablero, F, C, Sup, Izq, Inf, Der) :-
+    % write("obtener datos celda"),
+    compound(Tablero),
+    arg(F, Tablero, Fila),
+    arg(C, Fila,Celda),
+    arg(1, Celda, Sup),
+    arg(2, Celda, Izq),
+    Sup =:= -1,
+    Izq =\= -1,
+    Inf is -1,
+    Der is -1,
+    format(
+      'DEBUG celda: celda(F=~w, C=~w) -> Sup=~w, Izq=~w, Inf=~w, Der=~w~n',
+      [F, C, Sup, Izq, Inf, Der]
+    ).
+
+obtener_datos_celda(Tablero, F, C, Sup, Izq, Inf, Der) :-
+    % write("obtener datos celda"),
+    compound(Tablero),
+    arg(F, Tablero, Fila),
+    arg(C, Fila,Celda),
+    arg(1, Celda, Sup),
+    arg(2, Celda, Izq),
+    Sup =\= -1,
+    Izq =:= -1,
+    Inf is -1,
+    Der is -1,
     format(
       'DEBUG celda: celda(F=~w, C=~w) -> Sup=~w, Izq=~w, Inf=~w, Der=~w~n',
       [F, C, Sup, Izq, Inf, Der]
