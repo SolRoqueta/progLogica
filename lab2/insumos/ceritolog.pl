@@ -117,7 +117,7 @@ cambiar_turno(2, 1).
 % Caso primer Fila, jugada horizontal (no chequear celda superior) caso ya pintada arista, falla
 jugada_humano(Tablero,_,F,C,D,_,_,_) :-
     write("Caso error 1"),nl,
-    F =:= 1,
+    F == 1,
     D == 'h',
     obtener_datos_celda(Tablero, F, C, Sup, _,_,_),
     Sup =:= 1, 
@@ -128,7 +128,7 @@ jugada_humano(Tablero,_,F,C,D,_,_,_) :-
 % Caso 1
 jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
     write("Caso 1"), nl,
-    F =:= 1,
+    F == 1,
     D == 'h',
     obtener_datos_celda(Tablero, F, C, Sup, Izq, Inf, Der),
     format(
@@ -147,7 +147,7 @@ jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
 % Caso 2
 jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :- 
     write("Caso 2"), nl, 
-    F =:= 1,
+    F == 1,
     D == 'h',
     obtener_datos_celda(Tablero, F, C, Sup, Izq, Inf, Der),
     format(
@@ -167,7 +167,7 @@ jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
 % Caso primer Columna, jugada vertical (no chequear celda derecha) caso ya pintada arista, falla
 jugada_humano(Tablero,_,F,C,D,_,_,_) :-
     write("Caso error 2"), nl,
-    C =:= 1,
+    C == 1,
     D == 'v',
     obtener_datos_celda(Tablero, F, C, _, Izq, _,_),
     Izq =:= 1,
@@ -178,7 +178,7 @@ jugada_humano(Tablero,_,F,C,D,_,_,_) :-
 % Caso 3
 jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
     write("Caso 3"), nl,
-    C =:= 1,
+    C == 1,
     D == 'v',
     obtener_datos_celda(Tablero, F, C, Sup, Izq, Inf, Der),
     format(
@@ -215,7 +215,7 @@ jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
 % Caso general vertical falla, arista ya pintada
 jugada_humano(Tablero,_,F,C,D,_,_,_) :-
     write("Caso error 3"), nl,
-    C =\= 1,
+    C \== 1,
     D == 'v',
     obtener_datos_celdas_jugada_completa_vertical(Tablero, F, C, D, Med, _,_,_,_,_,_),
     format(
@@ -230,7 +230,7 @@ jugada_humano(Tablero,_,F,C,D,_,_,_) :-
 % Caso 5
 jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
     write("Caso 5"), nl,
-    C =\= 1,
+    C \== 1,
     D == 'v',
     obtener_datos_celdas_jugada_completa_vertical(Tablero, F, C, D, Med, SupIzq, SupDer, Der, InfDer, InfIzq, Izq),
     format(
@@ -254,7 +254,7 @@ SupIzq=~w, SupDer=~w, Der=~w, InfDer=~w, InfIzq=~w, Izq=~w~n',
 % Caso 6
 jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
     write("Caso 6"), nl,
-    C =\= 1,
+    C \== 1,
     D == 'v',
     obtener_datos_celdas_jugada_completa_vertical(Tablero, F, C, D, Med, SupIzq, SupDer, Der, InfDer, InfIzq, Izq),
     format(
@@ -278,7 +278,7 @@ SupIzq=~w, SupDer=~w, Der=~w, InfDer=~w, InfIzq=~w, Izq=~w~n',
 % Caso 7
 jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
     write("Caso 7"), nl,
-    C =\= 1,
+    C \== 1,
     D == 'v',
     format(
       'DEBUG jugada_humano Caso7: ~n Tablero=~w~n, Turno=~w, F=~w, C=~w, D=~w',
@@ -306,7 +306,7 @@ SupIzq=~w, SupDer=~w, Der=~w, InfDer=~w, InfIzq=~w, Izq=~w~n',
 % Caso 8
 jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
     write("Caso 8"), nl,
-    C =\= 1,
+    C \== 1,
     D == 'v',
     obtener_datos_celdas_jugada_completa_vertical(Tablero, F, C, D, Med, SupIzq, SupDer, Der, InfDer, InfIzq, Izq),
     format(
@@ -331,7 +331,7 @@ SupIzq=~w, SupDer=~w, Der=~w, InfDer=~w, InfIzq=~w, Izq=~w~n',
 % Caso general horizontal falla, arista ya pintada
 jugada_humano(Tablero,_,F,C,D,_,_,_) :-
     write("Caso error 4"), nl,
-    F =\= 1,
+    F \== 1,
     D == 'h',
     obtener_datos_celdas_jugada_completa_horizontal(Tablero, F, C, D, Med, _,_,_,_,_,_),
     format(
@@ -345,7 +345,7 @@ jugada_humano(Tablero,_,F,C,D,_,_,_) :-
 % Caso general horizonal pinta arista, no celda
 jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
     write("Caso 9"), nl,
-    F =\= 1,
+    F \== 1,
     D == 'h',
     obtener_datos_celdas_jugada_completa_horizontal(Tablero, F, C, D, Med, IzqInf, Inf, DerInf, IzqSup, Sup, DerSup),
     format(
@@ -369,7 +369,7 @@ IzqInf=~w, Inf=~w, DerInf=~w, IzqSup=~w, Sup=~w, DerSup=~w~n',
 % Caso general horizontal pinta arista, una celda inferior
 jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
     write("Caso 10"), nl,
-    F =\= 1,
+    F \== 1,
     D == 'h',
     obtener_datos_celdas_jugada_completa_horizontal(Tablero, F, C, D, Med, IzqInf, Inf, DerInf, IzqSup, Sup, DerSup),
     format(
@@ -393,7 +393,7 @@ IzqInf=~w, Inf=~w, DerInf=~w, IzqSup=~w, Sup=~w, DerSup=~w~n',
 % Caso general horizontal pinta arista, una celda superior
 jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
     write("Caso 11"), nl,
-    F =\= 1,
+    F \== 1,
     D == 'h',
     obtener_datos_celdas_jugada_completa_horizontal(Tablero, F, C, D, Med, IzqInf, Inf, DerInf, IzqSup, Sup, DerSup),
     format(
@@ -417,7 +417,7 @@ IzqInf=~w, Inf=~w, DerInf=~w, IzqSup=~w, Sup=~w, DerSup=~w~n',
 % Caso general horizonal pinta arista, dos celdas
 jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
     write("Caso 12"), nl,
-    F =\= 1,
+    F \== 1,
     D == 'h',
     obtener_datos_celdas_jugada_completa_horizontal(Tablero, F, C, D, Med, IzqInf, Inf, DerInf, IzqSup, Sup, DerSup),
     format(
@@ -530,12 +530,113 @@ set_jugador(Tablero, F, C, Turno) :-
     setarg(3, Celda, Turno).
 % --------
 
+% MINIMAX
+minimax(_, 0, _, _, _,_, 0):-!.
 
+% paso base fin de juego
+minimax(Tablero, _, _, _, _, _, 0):- fin_del_juego(Tablero, _, _, _),!.
 
+minimax(Tablero, Nivel, Alfa, Beta, Turno, JugadorInicio, Valor) :-
+    write('ENTRO MIMIMAX'),
+    Turno = JugadorInicio,
+    % busco todas las jugadas validas que se podrian hacer en el tablero 
+    findall( [F,C,D,Tablero2,Turno2,Celdas], jugada_humano(Tablero, Turno, F, C, D, Tablero2, Turno2, Celdas), Jugadas),
+    evaluar_max(Jugadas, Nivel, Alfa, Beta, JugadorInicio, -9999, Valor).
 
+minimax(Tablero, Nivel, Alfa, Beta, Turno, JugadorInicio, Valor) :-
+    Turno \= JugadorInicio,
+    % busco todas las jugadas validas que se podrian hacer en el tablero 
+    findall( [F,C,D,Tablero2,Turno2,Celdas], jugada_humano(Tablero, Turno, F, C, D, Tablero2, Turno2, Celdas), Jugadas),
+    evaluar_min(Jugadas, Nivel, Alfa, Beta, JugadorInicio, 9999, Valor).
 
+% MAXIMIZAR
 
-jugada_maquina(_,_,_,_,_,_,_,_,_):-fail.
+% Paso base -> iguala el acumulador a lo que va a devolver cuando ya recorio todo
+evaluar_max([], _, _, _, _, Acum, Acum).
+
+% En este caso poda
+evaluar_max([[F,C,D,Tablero2,Turno2,Celdas]|_], Nivel, Alfa, Beta, JugadorInicio, Acum, Valor) :-
+    write('ENTRO EVALUAR MAX PODA'),
+    % llama a la recursion con el hijo
+    Nivel2 is Nivel - 1,
+    minimax(Tablero2, Nivel2, Alfa, Beta,Turno2, JugadorInicio, ValorHijo),
+    length(Celdas, N),
+    ValorConHijo is ValorHijo + N,
+    MaxValor is max(Acum, ValorConHijo),
+    NuevoAlfa is max(Alfa, MaxValor),
+    NuevoAlfa >= Beta,
+    Valor is MaxValor.
+
+% Caso sin podar
+evaluar_max([[F,C,D,Tablero2,Turno2,Celdas]|R], Nivel, Alfa, Beta, JugadorInicio, Acum, Valor) :-
+    write('ENTRO EVALUAR MAX SIN PODA'),
+    % llama a la recursion con el hijo
+    Nivel2 is Nivel - 1,
+    minimax(Tablero2, Nivel2, Alfa, Beta,Turno2, JugadorInicio, ValorHijo),
+    length(Celdas, N),
+    % sumo la cantidad de celdas que cierra
+    ValorConHijo is ValorHijo + N,
+    MaxValor is max(Acum, ValorConHijo),
+    NuevoAlfa is max(Alfa, MaxValor),
+    NuevoAlfa < Beta,
+    evaluar_max(R, Nivel, NuevoAlfa, Beta, JugadorInicio, MaxValor, Valor).
+
+% MINIMIZAR 
+evaluar_min([], _, _, _, _, Acum, Acum).
+
+% En este caso poda
+evaluar_min([[F,C,D,Tablero2,Turno2,Celdas]|_], Nivel, Alfa, Beta, JugadorInicio, Acum, Valor) :-
+    write('ENTRO EVALUAR MIN PODA'),
+    % llama a la recursion con el hijo
+    Nivel2 is Nivel - 1,
+    minimax(Tablero2, Nivel2, Alfa, Beta, Turno2, JugadorInicio, ValorHijo),
+    length(Celdas, N),
+    % resto la cantidad de celdas que encierra el otro
+    ValorConHijo is ValorHijo - N,
+    MinValor is min(Acum, ValorConHijo),
+    NuevoBeta is min(Beta, MinValor),
+    NuevoBeta =< Alfa,
+    Valor is MinValor.
+
+% caso sin podar
+evaluar_min([[F,C,D,Tablero2,Turno2,Celdas]|R], Nivel, Alfa, Beta, JugadorInicio, Acum, Valor) :-
+    write('ENTRO EVALUAR MIN SIN PODA'),
+    % llama a la recursion con el hijo
+    Nivel2 is Nivel - 1,
+    minimax(Tablero2, Nivel2, Alfa, Beta, Turno2, JugadorInicio, ValorHijo),
+    length(Celdas, N),
+    % resto la cantidad de celdas que encierra el otro
+    ValorConHijo is ValorHijo - N,
+    MinValor is min(Acum, ValorConHijo),
+    NuevoBeta is min(Beta, MinValor),
+    NuevoBeta > Alfa,
+    evaluar_min(R, Nivel, Alfa, NuevoBeta, JugadorInicio, MinValor, Valor).
+
+% JUGADA MAQUINA
+
+jugada_maquina(Tablero, Turno, Nivel, F, C, D, Tablero2, Turno2, Celdas) :-
+    findall([F1,C1,D1,T2,Turno1,Celdas1], jugada_humano(Tablero, Turno, F1, C1, D1, T2, Turno1, Celdas1), Jugadas),
+    mejor_jugada(Jugadas, Turno, Nivel, [F, C, D, Tablero2, Turno2, Celdas]).
+
+mejor_jugada(Jugadas, Turno, Nivel, Mejor) :- mejor_jugada_acum(Jugadas, Turno, Nivel, _,Mejor).
+
+mejor_jugada_acum([],_,_,MejorAcum, MejorAcum).
+
+mejor_jugada_acum([F1, C1, D1, Tablero1, Turno1, Celdas1 | Resto], Turno, Nivel, ValorAcum, _, Mejor):-
+    Nivel1 is Nivel - 1,
+    minimax(Tablero1, Nivel1, -100, 100, Turno1, Turno1, Valor),
+    length(Celdas1, N),
+    ValorJugada is Valor + N,
+    ValorJugada > ValorAcum,
+    mejor_jugada_acum(Resto, Turno, Nivel, ValorJugada, [F1, C1, D1, Tablero1, Turno1, Celdas1], Mejor).
+    
+mejor_jugada_acum([F1, C1, D1, Tablero1, Turno1, Celdas1 | Resto], Turno, Nivel, ValorAcum, MejorAcum, Mejor):-
+    Nivel1 is Nivel - 1,
+    minimax(Tablero1, Nivel1, -100, 100, Turno1, Turno1, Valor),
+    length(Celdas1, N),
+    ValorJugada is Valor + N,
+    ValorJugada =< ValorAcum,
+    mejor_jugada_acum(Resto, Turno, Nivel, ValorAcum, Acum, Mejor).
 
 sugerencia_jugada(_,_,_,_,_,_):-fail.
 

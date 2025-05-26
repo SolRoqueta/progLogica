@@ -9,13 +9,14 @@
 
 % paso base nivel 0
 % minimax(Tablero, 0, _, _, Turno,JugadorInicio, Valor):-!.
+
 minimax(_, 0, _, _, _,_, 0):-!.
 
 % paso base fin de juego
-% minimax(Tablero, _, _, _, Turno, JugadorInicio, Valor):-
-%     fin_del_juego(Tablero, _, _, _),!.
+minimax(Tablero, _, _, _, _, _, 0):-
+     fin_del_juego(Tablero, _, _, _),!.
 
-% Paso base cuando no hay una jugada humano desde el tablero
+% Paso base cuando no hay una jugada humano desde el tablero NO VA
 minimax(Tablero, _, _, _, _, _, 0) :-
     \+ (jugada_humano(Tablero, _, _, _, _, _, _, _)), !.
 
@@ -24,7 +25,6 @@ minimax(Tablero, Nivel, Alfa, Beta, Turno, JugadorInicio, Valor) :-
     Turno = JugadorInicio,
     % busco todas las jugadas validas que se podrian hacer en el tablero 
     findall( [F,C,D,Tablero2,Turno2,Celdas], jugada_humano(Tablero, Turno, F, C, D, Tablero2, Turno2, Celdas), Jugadas),
-    write(Jugadas),
     evaluar_max(Jugadas, Nivel, Alfa, Beta, JugadorInicio, -9999, Valor).
 
 minimax(Tablero, Nivel, Alfa, Beta, Turno, JugadorInicio, Valor) :-
@@ -96,6 +96,32 @@ evaluar_min([[F,C,D,Tablero2,Turno2,Celdas]|R], Nivel, Alfa, Beta, JugadorInicio
     NuevoBeta > Alfa,
     evaluar_min(R, Nivel, Alfa, NuevoBeta, JugadorInicio, MinValor, Valor).
 
+% JUGADA MAQUINA
+
+jugada_maquina(Tablero, Turno, Nivel, F, C, D, Tablero2, Turno2, Celdas) :-
+    findall([F1,C1,D1,T2,Turno1,Celdas1], jugada_humano(Tablero, Turno, F1, C1, D1, T2, Turno1, Celdas1), Jugadas),
+    mejor_jugada(Jugadas, Turno, Nivel, [F, C, D, Tablero2, Turno2, Celdas]).
+
+mejor_jugada(Jugadas, Turno, Nivel, Mejor) :- mejor_jugada_acum(Jugadas, Turno, Nivel, _,Mejor).
+
+mejor_jugada_acum([],_,_,MejorAcum, MejorAcum).
+
+mejor_jugada_acum([F1, C1, D1, Tablero1, Turno1, Celdas1 | Resto], Turno, Nivel, ValorAcum, _, Mejor):-
+    Nivel1 is Nivel - 1,
+    minimax(Tablero1, Nivel1, -100, 100, Turno1, Turno1, Valor),
+    length(Celdas1, N),
+    ValorJugada is Valor + N,
+    ValorJugada > ValorAcum,
+    mejor_jugada_acum(Resto, Turno, Nivel, ValorJugada, [F1, C1, D1, Tablero1, Turno1, Celdas1], Mejor).
+    
+mejor_jugada_acum([F1, C1, D1, Tablero1, Turno1, Celdas1 | Resto], Turno, Nivel, ValorAcum, MejorAcum, Mejor):-
+    Nivel1 is Nivel - 1,
+    minimax(Tablero1, Nivel1, -100, 100, Turno1, Turno1, Valor),
+    length(Celdas1, N),
+    ValorJugada is Valor + N,
+    ValorJugada =< ValorAcum,
+    mejor_jugada_acum(Resto, Turno, Nivel, ValorAcum, Acum, Mejor).
+
 % COSAS PARA PROBAR
 
 % Jugada que cierra la celda (0,0)
@@ -119,3 +145,4 @@ jugada_humano(
          c(-,-,-), c(-,-,-)))),
     1, [(0,0)]).
 %Tablero = m(f((c(0,0,0),c(0,0,0),c(-,0,-)), f(c(0,0,0),c(0,0,0),c(-,0,-)), f(c(0,-,-),c(0,-,-)))), minimax(Tablero, 1, -9999, 9999, 1, 1, Valor).
+
