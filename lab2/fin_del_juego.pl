@@ -7,15 +7,15 @@ comparar(P1, P2, "Gana el jugador 2") :- P2 > P1, !.
 contar_celdas_fila([], 0, 0).
 
 contar_celdas_fila([c(H, V, 0) | _], _, _) :-
-    H \== (-), V \== (-), !, fail.
+    H =\= (-1), V =\= (-1), !, fail.
 
 contar_celdas_fila([c(H, V, 1) | Resto], P1, P2) :-
-    H \== (-), V \== (-),
+    H =\= (-1), V =\= (-1),
     contar_celdas_fila(Resto, P1R, P2),
     P1 is P1R + 1.
 
 contar_celdas_fila([c(H, V, 2) | Resto], P1, P2) :-
-    H \== (-), V \== (-),
+    H =\= (-1), V =\= (-1),
     contar_celdas_fila(Resto, P1, P2R),
     P2 is P2R + 1.
 
