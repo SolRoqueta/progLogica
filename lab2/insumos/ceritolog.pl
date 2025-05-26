@@ -98,11 +98,13 @@ contar_celdas([Fila | Resto], P1, P2) :-
     P1 is PF1 + PR1,
     P2 is PF2 + PR2.
 
-finalizar_juego(Tablero, P1, P2, Ganador) :-
+fin_del_juego(Tablero, P1, P2, Ganador) :-
     Tablero =.. [m | Filas],      % descompone el término Tablero en lista de filas
     contar_celdas(Filas, P1, P2), % suma los puntos
     comparar(P1, P2, Ganador),    % determina quién ganó
     !.                            % <-- corte: evita más soluciones
+
+
 
 
 
