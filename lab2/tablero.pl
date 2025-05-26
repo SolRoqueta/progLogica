@@ -1,14 +1,14 @@
 % Crear una fila de N columnas, todas con c(no, no, ninguno)
 crear_fila(0, []) :- !.
-crear_fila(1, [c(-, 0, -) | Resto]) :-
+crear_fila(1, [c(-1, 0, -1) | Resto]) :-
     crear_fila(0, Resto), !.
 crear_fila(N, [c(0, 0, 0) | Resto]) :-
     N1 is N - 1,
     crear_fila(N1, Resto).
 
 crear_ulimta_fila(0, []) :- !.
-crear_ulimta_fila(1, [c(-, -, -)]) :- !.
-crear_ulimta_fila(N, [c(0, -, -) | Resto]) :-
+crear_ulimta_fila(1, [c(-1, -1, -1)]) :- !.
+crear_ulimta_fila(N, [c(0, -1, -1) | Resto]) :-
     N1 is N - 1,
     crear_ulimta_fila(N1, Resto). 
 
