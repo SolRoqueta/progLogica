@@ -32,15 +32,15 @@ sugerencia_jugada/6 % sugerencia_jugada(+Tablero,+Turno,+Nivel,?F,?C,?D)
 
 % Crear una fila de N columnas, todas con c(no, no, ninguno)
 crear_fila(0, []) :- !.
-crear_fila(1, [c(-, 0, 0) | Resto]) :-
+crear_fila(1, [c(-1, 0, -1) | Resto]) :-
     crear_fila(0, Resto), !.
 crear_fila(N, [c(0, 0, 0) | Resto]) :-
     N1 is N - 1,
     crear_fila(N1, Resto).
 
 crear_ulimta_fila(0, []) :- !.
-crear_ulimta_fila(1, []) :- !.
-crear_ulimta_fila(N, [c(0, -, 0) | Resto]) :-
+crear_ulimta_fila(1, [c(-1, -1, -1)]) :- !.
+crear_ulimta_fila(N, [c(0, -1, -1) | Resto]) :-
     N1 is N - 1,
     crear_ulimta_fila(N1, Resto). 
 
@@ -64,8 +64,6 @@ tablero(N, Tablero) :-
 
 
 % --- fin de juego
-fin_del_juego(_,_,_,_):-fail.
-
 comparar(P1, P2, "Empate") :- P1 =:= P2, !.
 comparar(P1, P2, "Gana el jugador 1") :- P1 > P2, !.
 comparar(P1, P2, "Gana el jugador 2") :- P2 > P1, !.
@@ -75,15 +73,15 @@ comparar(P1, P2, "Gana el jugador 2") :- P2 > P1, !.
 contar_celdas_fila([], 0, 0).
 
 contar_celdas_fila([c(H, V, 0) | _], _, _) :-
-    H \== (-), V \== (-), !, fail.
+    H =\= (-1), V =\= (-1), !, fail.
 
 contar_celdas_fila([c(H, V, 1) | Resto], P1, P2) :-
-    H \== (-), V \== (-),
+    H =\= (-1), V =\= (-1),
     contar_celdas_fila(Resto, P1R, P2),
     P1 is P1R + 1.
 
 contar_celdas_fila([c(H, V, 2) | Resto], P1, P2) :-
-    H \== (-), V \== (-),
+    H =\= (-1), V =\= (-1),
     contar_celdas_fila(Resto, P1, P2R),
     P2 is P2R + 1.
 
@@ -107,17 +105,10 @@ finalizar_juego(Tablero, P1, P2, Ganador) :-
     !.                            % <-- corte: evita más soluciones
 
 
+
 % ----- fin de juego
 % ------ jugada humano
 % jugada_humano(+Tablero,+Turno,+F,+C,+D,?Tablero2,?Turno2,?Celdas)
-cambiar_turno(1, 2).
-cambiar_turno(2, 1).
-
-% Caso primer Fila, jugada horizontal (no chequear celda superior) caso ya pintada arista, falla
-cambiar_turno(1, 2).
-cambiar_turno(2, 1).
-
-% Caso primer Fila, jugada horizontal (no chequear celda superior) caso ya pintada arista, falla
 cambiar_turno(1, 2).
 cambiar_turno(2, 1).
 
@@ -477,8 +468,8 @@ obtener_datos_celda(Tablero, F, C, Sup, Izq, Inf, Der) :-
     arg(C, Fila,Celda),
     arg(1, Celda, Sup),
     arg(2, Celda, Izq),
-    Sup \== "-",
-    Izq \== "-",
+    Sup =\= -1,
+    Izq =\= -1,
     F1 is F + 1,
     arg(F1, Tablero, FilaInf),
     arg(C, FilaInf,CeldaInf),
@@ -498,10 +489,26 @@ obtener_datos_celda(Tablero, F, C, Sup, Izq, Inf, Der) :-
     arg(C, Fila,Celda),
     arg(1, Celda, Sup),
     arg(2, Celda, Izq),
-    Sup == "-",
-    Izq == "-",
-    Inf = "-",
-    Der = "-",
+    Sup =:= -1,
+    Izq =\= -1,
+    Inf is -1,
+    Der is -1,
+    format(
+      'DEBUG celda: celda(F=~w, C=~w) -> Sup=~w, Izq=~w, Inf=~w, Der=~w~n',
+      [F, C, Sup, Izq, Inf, Der]
+    ).
+
+obtener_datos_celda(Tablero, F, C, Sup, Izq, Inf, Der) :-
+    % write("obtener datos celda"),
+    compound(Tablero),
+    arg(F, Tablero, Fila),
+    arg(C, Fila,Celda),
+    arg(1, Celda, Sup),
+    arg(2, Celda, Izq),
+    Sup =\= -1,
+    Izq =:= -1,
+    Inf is -1,
+    Der is -1,
     format(
       'DEBUG celda: celda(F=~w, C=~w) -> Sup=~w, Izq=~w, Inf=~w, Der=~w~n',
       [F, C, Sup, Izq, Inf, Der]
