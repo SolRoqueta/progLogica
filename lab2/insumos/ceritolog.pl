@@ -530,6 +530,13 @@ set_jugador(Tablero, F, C, Turno) :-
     setarg(3, Celda, Turno).
 % --------
 
+% PREDICADOS AUXILIARES
+
+tamano_tablero(Tablero, N) :- Tablero =.. [m|Filas], length(Filas,N).
+
+direccion(h).
+direccion(v).
+
 % MINIMAX
 minimax(_, 0, _, _, _,_, 0):-!.
 
@@ -537,16 +544,26 @@ minimax(_, 0, _, _, _,_, 0):-!.
 minimax(Tablero, _, _, _, _, _, 0):- fin_del_juego(Tablero, _, _, _),!.
 
 minimax(Tablero, Nivel, Alfa, Beta, Turno, JugadorInicio, Valor) :-
-    write('ENTRO MIMIMAX'),
+    writeln('ENTRO MIMIMAX'),
     Turno = JugadorInicio,
+    tamano_tablero(Tablero, N),
     % busco todas las jugadas validas que se podrian hacer en el tablero 
-    findall( [F,C,D,Tablero2,Turno2,Celdas], jugada_humano(Tablero, Turno, F, C, D, Tablero2, Turno2, Celdas), Jugadas),
+    findall( [F,C,D,Tablero2,Turno2,Celdas], (
+            between(1,N,F),
+            between(1,N,C),
+            direccion(D),
+            jugada_humano(Tablero, Turno, F, C, D, Tablero2, Turno2, Celdas)), Jugadas),
     evaluar_max(Jugadas, Nivel, Alfa, Beta, JugadorInicio, -9999, Valor).
 
 minimax(Tablero, Nivel, Alfa, Beta, Turno, JugadorInicio, Valor) :-
     Turno \= JugadorInicio,
+    tamano_tablero(Tablero, N),
     % busco todas las jugadas validas que se podrian hacer en el tablero 
-    findall( [F,C,D,Tablero2,Turno2,Celdas], jugada_humano(Tablero, Turno, F, C, D, Tablero2, Turno2, Celdas), Jugadas),
+    findall( [F,C,D,Tablero2,Turno2,Celdas], (
+            between(1,N,F),
+            between(1,N,C),
+            direccion(D),
+            jugada_humano(Tablero, Turno, F, C, D, Tablero2, Turno2, Celdas)), Jugadas),
     evaluar_min(Jugadas, Nivel, Alfa, Beta, JugadorInicio, 9999, Valor).
 
 % MAXIMIZAR
@@ -615,22 +632,33 @@ evaluar_min([[F,C,D,Tablero2,Turno2,Celdas]|R], Nivel, Alfa, Beta, JugadorInicio
 % JUGADA MAQUINA
 
 jugada_maquina(Tablero, Turno, Nivel, F, C, D, Tablero2, Turno2, Celdas) :-
-    findall([F1,C1,D1,T2,Turno1,Celdas1], jugada_humano(Tablero, Turno, F1, C1, D1, T2, Turno1, Celdas1), Jugadas),
+    tamano_tablero(Tablero, N),
+    findall([F1,C1,D1,T2,Turno1,Celdas1],(
+            between(1,N,F1),
+            between(1,N,C1),
+            direccion(D1),
+            jugada_humano(Tablero, Turno, F1, C1, D1, T2, Turno1, Celdas1)
+        ), Jugadas),
+    writeln(Jugadas),
     mejor_jugada(Jugadas, Turno, Nivel, [F, C, D, Tablero2, Turno2, Celdas]).
 
-mejor_jugada(Jugadas, Turno, Nivel, Mejor) :- mejor_jugada_acum(Jugadas, Turno, Nivel, _,Mejor).
+mejor_jugada(Jugadas, Turno, Nivel, Mejor) :- writeln('entro mejor jugada'),
+            mejor_jugada_acum(Jugadas, Turno, Nivel, 0, _, Mejor).
 
-mejor_jugada_acum([],_,_,MejorAcum, MejorAcum).
+mejor_jugada_acum([],_,_,_,MejorAcum, MejorAcum):- writeln('entro paso base vacio').
 
-mejor_jugada_acum([F1, C1, D1, Tablero1, Turno1, Celdas1 | Resto], Turno, Nivel, ValorAcum, _, Mejor):-
+mejor_jugada_acum([[F1, C1, D1, Tablero1, Turno1, Celdas1] | Resto], Turno, Nivel, ValorAcum, _, Mejor):-
+    writeln('entro mejor jugada acum'),
     Nivel1 is Nivel - 1,
+    writeln(Tablero1),
     minimax(Tablero1, Nivel1, -100, 100, Turno1, Turno1, Valor),
     length(Celdas1, N),
     ValorJugada is Valor + N,
     ValorJugada > ValorAcum,
     mejor_jugada_acum(Resto, Turno, Nivel, ValorJugada, [F1, C1, D1, Tablero1, Turno1, Celdas1], Mejor).
     
-mejor_jugada_acum([F1, C1, D1, Tablero1, Turno1, Celdas1 | Resto], Turno, Nivel, ValorAcum, MejorAcum, Mejor):-
+mejor_jugada_acum([[F1, C1, D1, Tablero1, Turno1, Celdas1] | Resto], Turno, Nivel, ValorAcum, MejorAcum, Mejor):-
+    writeln('entro mejor jugada acum 2'),
     Nivel1 is Nivel - 1,
     minimax(Tablero1, Nivel1, -100, 100, Turno1, Turno1, Valor),
     length(Celdas1, N),
