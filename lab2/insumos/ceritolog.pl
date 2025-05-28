@@ -478,6 +478,7 @@ evaluar_min([[_,_,_,Tablero2,Turno2,Celdas]|_], Nivel, Alfa, Beta, JugadorInicio
     length(Celdas, N),
     % resto la cantidad de celdas que encierra el otro
     ValorConHijo is ValorHijo - N,
+    % ValorConHijo is N - ValorHijo,
     MinValor is min(Acum, ValorConHijo),
     NuevoBeta is min(Beta, MinValor),
     NuevoBeta =< Alfa, !,
@@ -490,7 +491,8 @@ evaluar_min([[_,_,_,Tablero2,Turno2,Celdas]|R], Nivel, Alfa, Beta, JugadorInicio
     minimax(Tablero2, Nivel2, Alfa, Beta, Turno2, JugadorInicio, ValorHijo),
     length(Celdas, N),
     % resto la cantidad de celdas que encierra el otro
-    ValorConHijo is ValorHijo - N,
+    ValorConHijo is ValorHijo - N, 
+    % ValorConHijo is N - ValorHijo,
     NuevoAcum is min(Acum, ValorConHijo),
     NuevoBeta is min(Beta, NuevoAcum),
     evaluar_min(R, Nivel, Alfa, NuevoBeta, JugadorInicio, NuevoAcum, ValorFinal).
@@ -511,7 +513,7 @@ jugada_maquina(Tablero, Turno, Nivel, F, C, D, Tablero2, Turno2, Celdas) :-
 mejor_jugada(Jugadas, Turno, Nivel, Mejor) :-
     Jugadas = [[F1, C1, D1, Tablero1, Turno1, Celdas1] | Resto],
     Nivel1 is Nivel - 1,
-    minimax(Tablero1, Nivel1, -100, 100, Turno1, Turno1, Valor),
+    minimax(Tablero1, Nivel1, -100, 100, Turno1, Turno, Valor),
     length(Celdas1, N),
     ValorJugada is Valor + N,
     mejor_jugada_acum(Resto, Turno, Nivel, ValorJugada, [F1, C1, D1, Tablero1, Turno1, Celdas1], Mejor).
@@ -522,7 +524,7 @@ mejor_jugada_acum([], _, _, _, MejorAcum, MejorAcum).
 % Si la jugada actual es mejor que el acumulado
 mejor_jugada_acum([[F1, C1, D1, Tablero1, Turno1, Celdas1] | Resto], Turno, Nivel, ValorAcum, _, Mejor) :-
     Nivel1 is Nivel - 1,
-    minimax(Tablero1, Nivel1, -100, 100, Turno1, Turno1, Valor),
+    minimax(Tablero1, Nivel1, -100, 100, Turno1, Turno, Valor),
     length(Celdas1, N),
     ValorJugada is Valor + N,
     ValorJugada > ValorAcum,!,
@@ -531,7 +533,7 @@ mejor_jugada_acum([[F1, C1, D1, Tablero1, Turno1, Celdas1] | Resto], Turno, Nive
 % Si la jugada actual no mejora
 mejor_jugada_acum([[_, _, _, Tablero1, Turno1, Celdas1] | Resto], Turno, Nivel, ValorAcum, MejorAcum, Mejor) :-
     Nivel1 is Nivel - 1,
-    minimax(Tablero1, Nivel1, -100, 100, Turno1, Turno1, Valor),
+    minimax(Tablero1, Nivel1, -100, 100, Turno1, Turno, Valor),
     length(Celdas1, N),
     ValorJugada is Valor + N,
     ValorJugada =< ValorAcum, !,
