@@ -119,7 +119,7 @@ jugada_humano(Tablero,_,F,C,D,_,_,_) :-
     F == 1,
     D == 'h',
     obtener_datos_celda(Tablero, F, C, Sup, _,_,_),
-    Sup =:= 1, 
+    Sup =:= 1, !,
     fail.
 
 % Caso primer Fila, jugada horizontal (no chequear celda superior) caso OK, pinta arista y pero no celda
@@ -129,7 +129,7 @@ jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
     D == 'h',
     obtener_datos_celda(Tablero, F, C, Sup, Izq, Inf, Der),
     Sup =:= 0, 
-    Izq + Der + Inf =\= 3,
+    Izq + Der + Inf =\= 3, !,
     set_datos_celda(Tablero, F, C, 1, Izq),
     cambiar_turno(Turno, Turno2),
     Celdas = [],
@@ -143,7 +143,7 @@ jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
     D == 'h',
     obtener_datos_celda(Tablero, F, C, Sup, Izq, Inf, Der),
     Sup =:= 0, 
-    Izq + Der + Inf  =:= 3,
+    Izq + Der + Inf  =:= 3, !,
     set_datos_celda(Tablero, F, C, 1, Izq),
     set_jugador(Tablero, F, C, Turno),
     Tablero2 = Tablero,
@@ -157,7 +157,7 @@ jugada_humano(Tablero,_,F,C,D,_,_,_) :-
     C == 1,
     D == 'v',
     obtener_datos_celda(Tablero, F, C, _, Izq, _,_),
-    Izq =:= 1,
+    Izq =:= 1, !,
     fail.
 
 % Caso primer Columna, jugada vertical (no chequear celda derecha) caso OK, pinta arista pero no celda.
@@ -167,7 +167,7 @@ jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
     D == 'v',
     obtener_datos_celda(Tablero, F, C, Sup, Izq, Inf, Der),
     Izq =:= 0,
-    Sup + Der + Inf =\= 3,
+    Sup + Der + Inf =\= 3, !,
     set_datos_celda(Tablero, F, C, Sup, 1),
     cambiar_turno(Turno, Turno2),
     Celdas = [],
@@ -181,7 +181,7 @@ jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
     D == 'v',
     obtener_datos_celda(Tablero, F, C, Sup, Izq, Inf, Der),
     Izq =:= 0,
-    Sup + Der + Inf =:= 3,
+    Sup + Der + Inf =:= 3, !,
     set_datos_celda(Tablero, F, C, Sup, 1),
     set_jugador(Tablero, F, C, Turno),
     Tablero2 = Tablero,
@@ -193,8 +193,8 @@ jugada_humano(Tablero,_,F,C,D,_,_,_) :-
     C \== 1,
     D == 'v',
     obtener_datos_celdas_jugada_completa_vertical(Tablero, F, C, D, Med, _,_,_,_,_,_),
-    Med =:= 1,
-    fail, !.
+    Med =:= 1, !,
+    fail.
 
 % Caso general vertical pinta arista, no celda
 % Caso 5
@@ -205,7 +205,7 @@ jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
     Med =\= 1,
     Med =\= -1,
     SupDer + Der + InfDer =\= 3,
-    SupIzq + Izq + InfIzq =\= 3,
+    SupIzq + Izq + InfIzq =\= 3, !,
     set_datos_celda(Tablero, F, C, SupDer, 1),
     cambiar_turno(Turno, Turno2),
     Celdas = [],
@@ -221,7 +221,7 @@ jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
     obtener_datos_celdas_jugada_completa_vertical(Tablero, F, C, D, Med, SupIzq, SupDer, Der, InfDer, InfIzq, Izq),
     Med =\= 1,
     SupDer + Der + InfDer =:= 3,
-    SupIzq + Izq + InfIzq =\= 3,
+    SupIzq + Izq + InfIzq =\= 3,!,
     set_datos_celda(Tablero, F, C, SupDer, 1),
     set_jugador(Tablero, F, C, Turno),
     Tablero2 = Tablero,
@@ -237,7 +237,7 @@ jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
     obtener_datos_celdas_jugada_completa_vertical(Tablero, F, C, D, Med, SupIzq, SupDer, Der, InfDer, InfIzq, Izq),
     Med =\= 1,
     SupDer + Der + InfDer =\= 3,
-    SupIzq + Izq + InfIzq =:= 3,
+    SupIzq + Izq + InfIzq =:= 3,!,
     set_datos_celda(Tablero, F, C, SupDer, 1),
     C1 is C - 1,
     set_jugador(Tablero, F, C1, Turno),
@@ -253,7 +253,7 @@ jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
     obtener_datos_celdas_jugada_completa_vertical(Tablero, F, C, D, Med, SupIzq, SupDer, Der, InfDer, InfIzq, Izq),
     Med =\= 1,
     SupDer + Der + InfDer =:= 3,
-    SupIzq + Izq + InfIzq =:= 3,
+    SupIzq + Izq + InfIzq =:= 3, !,
     set_datos_celda(Tablero, F, C, SupDer, 1),
     C1 is C - 1,
     set_jugador(Tablero, F, C1, Turno),
@@ -268,7 +268,7 @@ jugada_humano(Tablero,_,F,C,D,_,_,_) :-
     F \== 1,
     D == 'h',
     obtener_datos_celdas_jugada_completa_horizontal(Tablero, F, C, D, Med, _,_,_,_,_,_),
-    Med =:= 1, 
+    Med =:= 1, !,
     fail.
 
 % Caso general horizonal pinta arista, no celda
@@ -279,7 +279,7 @@ jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
     Med =\= 1,
     Med =\= -1,
     Sup + IzqSup + DerSup =\= 3,
-    Inf + IzqInf + DerInf =\= 3,
+    Inf + IzqInf + DerInf =\= 3, !,
     set_datos_celda(Tablero, F, C, 1, IzqInf),
     cambiar_turno(Turno, Turno2),
     Celdas = [],
@@ -294,7 +294,7 @@ jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
     obtener_datos_celdas_jugada_completa_horizontal(Tablero, F, C, D, Med, IzqInf, Inf, DerInf, IzqSup, Sup, DerSup),
     Med =\= 1,
     Sup + IzqSup + DerSup =\= 3,
-    Inf + IzqInf + DerInf =:= 3,
+    Inf + IzqInf + DerInf =:= 3, !,
     set_datos_celda(Tablero,F,C,1,IzqInf),
     set_jugador(Tablero, F, C, Turno),
     Tablero2 = Tablero,
@@ -309,7 +309,7 @@ jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
     obtener_datos_celdas_jugada_completa_horizontal(Tablero, F, C, D, Med, IzqInf, Inf, DerInf, IzqSup, Sup, DerSup),
     Med =\= 1,
     Sup + IzqSup + DerSup =:= 3,
-    Inf + IzqInf + DerInf =\= 3,
+    Inf + IzqInf + DerInf =\= 3, !,
     set_datos_celda(Tablero, F, C, 1, IzqInf),
     F1 is F - 1,
     set_jugador(Tablero, F1, C, Turno),
@@ -324,7 +324,7 @@ jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
     obtener_datos_celdas_jugada_completa_horizontal(Tablero, F, C, D, Med, IzqInf, Inf, DerInf, IzqSup, Sup, DerSup),
     Med =\= 1,
     Sup + IzqSup + DerSup =:= 3,
-    Inf + IzqInf + DerInf =:= 3,
+    Inf + IzqInf + DerInf =:= 3, !,
     set_datos_celda(Tablero, F, C, 1, IzqInf),
     set_jugador(Tablero, F, C, Turno),
     F1 is F - 1,
