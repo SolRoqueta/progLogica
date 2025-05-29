@@ -540,6 +540,14 @@ mejor_jugada_acum([[_, _, _, Tablero1, Turno1, Celdas1] | Resto], Turno, Nivel, 
     mejor_jugada_acum(Resto, Turno, Nivel, ValorAcum, MejorAcum, Mejor).
 
 
-sugerencia_jugada(_,_,_,_,_,_):-fail.
+sugerencia_jugada(Tablero,Turno,Nivel,F,C,D):-
+    tamano_tablero(Tablero, N),
+    findall([F1,C1,D1,T2,Turno1,Celdas1],(
+            between(1,N,F1),
+            between(1,N,C1),
+            direccion(D1),
+            jugada_humano(Tablero, Turno, F1, C1, D1, T2, Turno1, Celdas1)
+        ), Jugadas),
+    mejor_jugada(Jugadas, Turno, Nivel, [F, C, D, _, _, _]).
 
 
