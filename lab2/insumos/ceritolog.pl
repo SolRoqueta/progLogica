@@ -410,11 +410,59 @@ tamano_tablero(Tablero, N) :- Tablero =.. [m|Filas], length(Filas,N).
 direccion(h).
 direccion(v).
 
+contar_celdas2(Filas, Cant1, Cant2) :-
+    contar_celdas_filas(Filas, 0, 0, Cant1, Cant2).
+
+% Caso base: sin filas, ya terminé
+contar_celdas_filas([], A1, A2, A1, A2).
+
+% Procesar una fila (que es un functor f(...))
+contar_celdas_filas([Fila|Resto], A1, A2, Cant1, Cant2) :-
+    Fila =.. [f | Celdas],  % Convertimos la fila a lista de celdas
+    contar_celdas3(Celdas, A1, A2, NA1, NA2),
+    contar_celdas_filas(Resto, NA1, NA2, Cant1, Cant2).
+
+% contar_celdas(+ListaCeldas, +A1, +A2, -R1, -R2)
+contar_celdas3([], A1, A2, A1, A2).
+
+contar_celdas3([c(_, _, 1)|R], A1, A2, R1, R2) :-
+    NA1 is A1 + 1,
+    contar_celdas3(R, NA1, A2, R1, R2).
+
+contar_celdas3([c(_, _, 2)|R], A1, A2, R1, R2) :-
+    NA2 is A2 + 1,
+    contar_celdas3(R, A1, NA2, R1, R2).
+
+contar_celdas3([c(_, _, J)|R], A1, A2, R1, R2) :-
+    J \= 1, J \= 2,
+    contar_celdas3(R, A1, A2, R1, R2).
+
+
 % MINIMAX
-minimax(_, 0, _, _, _,_, 0):-!.
+% minimax(_, 0, _, _, _,_, 0):-!.
+
+minimax(Tablero, 0, _, _, _, JugadorInicio, Valor) :-
+    Tablero =.. [m | Filas],
+    contar_celdas2(Filas, P1, P2),
+    (JugadorInicio == 1 -> Valor is P1 - P2 ; Valor is P2 - P1), !.
+
 
 % paso base fin de juego
-minimax(Tablero, _, _, _, _, _, 0):- fin_del_juego(Tablero, _, _, _),!.
+% minimax(Tablero, _, _, _, _, _, 0):- fin_del_juego(Tablero, _, _, _),!.
+
+minimax(Tablero, _, _, _, _, JugadorInicio, Valor):- 
+     fin_del_juego(Tablero, P1, P2, _),!,
+     (JugadorInicio == 1 -> Valor is P1 - P2 ; Valor is P2 - P1).
+
+% minimax(Tablero, _, _, _, _, JugadorInicio, Valor):- 
+%     fin_del_juego(Tablero, P1, P2, _),
+%     JugadorInicio ==1,!,
+%     Valor is P1-P2.
+
+% minimax(Tablero, _, _, _, _, JugadorInicio, Valor):- 
+%    fin_del_juego(Tablero, P1, P2, _),
+%    JugadorInicio ==2,!,
+%    Valor is P2-P1.
 
 minimax(Tablero, Nivel, Alfa, Beta, Turno, JugadorInicio, Valor) :-
     Turno = JugadorInicio,!,
@@ -437,6 +485,8 @@ minimax(Tablero, Nivel, Alfa, Beta, Turno, JugadorInicio, Valor) :-
             direccion(D),
             jugada_humano(Tablero, Turno, F, C, D, Tablero2, Turno2, Celdas)), Jugadas),
     evaluar_min(Jugadas, Nivel, Alfa, Beta, JugadorInicio, 9999, Valor).
+
+
 
 % MAXIMIZAR
 
@@ -509,36 +559,27 @@ jugada_maquina(Tablero, Turno, Nivel, F, C, D, Tablero2, Turno2, Celdas) :-
         ), Jugadas),
     mejor_jugada(Jugadas, Turno, Nivel, [F, C, D, Tablero2, Turno2, Celdas]).
 
-% Punto de entrada
+% Llama minimax una sola vez por jugada
 mejor_jugada(Jugadas, Turno, Nivel, Mejor) :-
-    Jugadas = [[F1, C1, D1, Tablero1, Turno1, Celdas1] | Resto],
-    Nivel1 is Nivel - 1,
-    minimax(Tablero1, Nivel1, -100, 100, Turno1, Turno, Valor),
-    length(Celdas1, N),
-    ValorJugada is Valor + N,
-    mejor_jugada_acum(Resto, Turno, Nivel, ValorJugada, [F1, C1, D1, Tablero1, Turno1, Celdas1], Mejor).
+    findall(
+        [F, C, D, T2, T1, Celdas, ValorJugada],
+        (
+            member([F, C, D, T2, T1, Celdas], Jugadas),
+            Nivel1 is Nivel - 1,
+            minimax(T2, Nivel1, -1000, 1000, T1, Turno, ValorMinimax),
+            length(Celdas, NCeldas),
+            ValorJugada is ValorMinimax + NCeldas
+        ),
+        JugadasConValor
+    ),
+    mejor_jugada_acum(JugadasConValor, -10000, _, Mejor).
 
-% Caso base 
-mejor_jugada_acum([], _, _, _, MejorAcum, MejorAcum).
-
-% Si la jugada actual es mejor que el acumulado
-mejor_jugada_acum([[F1, C1, D1, Tablero1, Turno1, Celdas1] | Resto], Turno, Nivel, ValorAcum, _, Mejor) :-
-    Nivel1 is Nivel - 1,
-    minimax(Tablero1, Nivel1, -100, 100, Turno1, Turno, Valor),
-    length(Celdas1, N),
-    ValorJugada is Valor + N,
-    ValorJugada > ValorAcum,!,
-    mejor_jugada_acum(Resto, Turno, Nivel, ValorJugada, [F1, C1, D1, Tablero1, Turno1, Celdas1], Mejor).
-
-% Si la jugada actual no mejora
-mejor_jugada_acum([[_, _, _, Tablero1, Turno1, Celdas1] | Resto], Turno, Nivel, ValorAcum, MejorAcum, Mejor) :-
-    Nivel1 is Nivel - 1,
-    minimax(Tablero1, Nivel1, -100, 100, Turno1, Turno, Valor),
-    length(Celdas1, N),
-    ValorJugada is Valor + N,
-    ValorJugada =< ValorAcum, !,
-    mejor_jugada_acum(Resto, Turno, Nivel, ValorAcum, MejorAcum, Mejor).
-
+mejor_jugada_acum([], _, Mejor, Mejor).
+mejor_jugada_acum([[F, C, D, T2, T1, Celdas, Valor]|Resto], MejorVal, _, Mejor) :-
+    Valor > MejorVal, !,
+    mejor_jugada_acum(Resto, Valor, [F, C, D, T2, T1, Celdas], Mejor).
+mejor_jugada_acum([_|Resto], MejorVal, MejorAct, Mejor) :-
+    mejor_jugada_acum(Resto, MejorVal, MejorAct, Mejor).
 
 sugerencia_jugada(Tablero,Turno,Nivel,F,C,D):-
     tamano_tablero(Tablero, N),
