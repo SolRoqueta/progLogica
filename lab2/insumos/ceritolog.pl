@@ -72,7 +72,7 @@ comparar(P1, P2, "Gana el jugador 2") :- P2 > P1, !.
 % 
 contar_celdas_fila([], 0, 0).
 
-contar_celdas_fila([c(H, V, J) | Resto], P1, P2) :-Add commentMore actions
+contar_celdas_fila([c(H, V, J) | Resto], P1, P2) :-
     ( J == 0 ->
         fail  % celda sin capturar - no termina el juego
     ; J == 1, H \== (-1), V \== (-1) ->
