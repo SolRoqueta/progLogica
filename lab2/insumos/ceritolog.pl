@@ -69,7 +69,7 @@ comparar(P1, P2, "Gana el jugador 1") :- P1 > P2, !.
 comparar(P1, P2, "Gana el jugador 2") :- P2 > P1, !.
 
 
-% 
+% suma las celdas capturadas por cada jugador por cada fila
 contar_celdas_fila([], 0, 0).
 
 contar_celdas_fila([c(H, V, J) | Resto], P1, P2) :-
@@ -99,13 +99,9 @@ fin_del_juego(Tablero, P1, P2, Ganador) :-
     comparar(P1, P2, Ganador),    % determina quién ganó
     !.                            % <-- corte: evita más soluciones
 
-
-
-
-
 % ----- fin de juego
+
 % ------ jugada humano
-% jugada_humano(+Tablero,+Turno,+F,+C,+D,?Tablero2,?Turno2,?Celdas)
 cambiar_turno(1, 2).
 cambiar_turno(2, 1).
 
@@ -206,8 +202,6 @@ jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
     Celdas = [],
     Tablero2 = Tablero.
 
-
-   
 % Caso general vertical pinta arista, una celda derecha
 % Caso 6
 jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
@@ -222,7 +216,6 @@ jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
     Tablero2 = Tablero,
     Turno2 = Turno,
     Celdas = [[F,C]].
-
 
 % Caso general vertical pinta arista, una celda izquierda
 % Caso 7
@@ -257,7 +250,6 @@ jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
     Turno2 = Turno,
     Celdas = [[F,C1],[F,C]].
 
-
 % Caso general horizontal falla, arista ya pintada
 jugada_humano(Tablero,_,F,C,D,_,_,_) :-
     F \== 1,
@@ -281,7 +273,6 @@ jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
     Tablero2 = Tablero.
 
 
-   
 % Caso general horizontal pinta arista, una celda inferior
 jugada_humano(Tablero,Turno,F,C,D,Tablero2,Turno2,Celdas) :-
     F \== 1,
@@ -373,7 +364,6 @@ obtener_datos_celda(Tablero, F, C, Sup, Izq, Inf, Der) :-
     Der is -1.
 
 obtener_datos_celda(Tablero, F, C, Sup, Izq, Inf, Der) :-
-    % write("obtener datos celda"),
     compound(Tablero),
     arg(F, Tablero, Fila),
     arg(C, Fila,Celda),
@@ -396,7 +386,7 @@ set_jugador(Tablero, F, C, Turno) :-
     arg(F, Tablero, Fila),
     arg(C, Fila,Celda),
     setarg(3, Celda, Turno).
-% --------
+% ------ jugada humano
 
 % PREDICADOS AUXILIARES
 
@@ -411,13 +401,12 @@ contar_celdas2(Filas, Cant1, Cant2) :-
 % Caso base: sin filas, ya terminé
 contar_celdas_filas([], A1, A2, A1, A2).
 
-% Procesar una fila (que es un functor f(...))
+% Procesar una fila 
 contar_celdas_filas([Fila|Resto], A1, A2, Cant1, Cant2) :-
     Fila =.. [f | Celdas],  % Convertimos la fila a lista de celdas
     contar_celdas3(Celdas, A1, A2, NA1, NA2),
     contar_celdas_filas(Resto, NA1, NA2, Cant1, Cant2).
 
-% contar_celdas(+ListaCeldas, +A1, +A2, -R1, -R2)
 contar_celdas3([], A1, A2, A1, A2).
 
 contar_celdas3([c(_, _, 1)|R], A1, A2, R1, R2) :-
@@ -432,10 +421,9 @@ contar_celdas3([c(_, _, J)|R], A1, A2, R1, R2) :-
     J \= 1, J \= 2,
     contar_celdas3(R, A1, A2, R1, R2).
 
+% ------ minimax
 
-% MINIMAX
-% minimax(_, 0, _, _, _,_, 0):-!.
-
+% paso base nivel 0
 minimax(Tablero, 0, _, _, _, JugadorInicio, Valor) :-
     Tablero =.. [m | Filas],
     contar_celdas2(Filas, P1, P2),
@@ -443,21 +431,9 @@ minimax(Tablero, 0, _, _, _, JugadorInicio, Valor) :-
 
 
 % paso base fin de juego
-% minimax(Tablero, _, _, _, _, _, 0):- fin_del_juego(Tablero, _, _, _),!.
-
 minimax(Tablero, _, _, _, _, JugadorInicio, Valor):- 
      fin_del_juego(Tablero, P1, P2, _),!,
      (JugadorInicio == 1 -> Valor is P1 - P2 ; Valor is P2 - P1).
-
-% minimax(Tablero, _, _, _, _, JugadorInicio, Valor):- 
-%     fin_del_juego(Tablero, P1, P2, _),
-%     JugadorInicio ==1,!,
-%     Valor is P1-P2.
-
-% minimax(Tablero, _, _, _, _, JugadorInicio, Valor):- 
-%    fin_del_juego(Tablero, P1, P2, _),
-%    JugadorInicio ==2,!,
-%    Valor is P2-P1.
 
 minimax(Tablero, Nivel, Alfa, Beta, Turno, JugadorInicio, Valor) :-
     Turno = JugadorInicio,!,
@@ -480,8 +456,6 @@ minimax(Tablero, Nivel, Alfa, Beta, Turno, JugadorInicio, Valor) :-
             direccion(D),
             jugada_humano(Tablero, Turno, F, C, D, Tablero2, Turno2, Celdas)), Jugadas),
     evaluar_min(Jugadas, Nivel, Alfa, Beta, JugadorInicio, 9999, Valor).
-
-
 
 % MAXIMIZAR
 
@@ -542,7 +516,9 @@ evaluar_min([[_,_,_,Tablero2,Turno2,Celdas]|R], Nivel, Alfa, Beta, JugadorInicio
     NuevoBeta is min(Beta, NuevoAcum),
     evaluar_min(R, Nivel, Alfa, NuevoBeta, JugadorInicio, NuevoAcum, ValorFinal).
 
-% JUGADA MAQUINA
+% ------ minimax
+
+% ------ jugada maquina
 
 jugada_maquina(Tablero, Turno, Nivel, F, C, D, Tablero2, Turno2, Celdas) :-
     tamano_tablero(Tablero, N),
@@ -576,6 +552,10 @@ mejor_jugada_acum([[F, C, D, T2, T1, Celdas, Valor]|Resto], MejorVal, _, Mejor) 
 mejor_jugada_acum([_|Resto], MejorVal, MejorAct, Mejor) :-
     mejor_jugada_acum(Resto, MejorVal, MejorAct, Mejor).
 
+% ------ jugada maquina
+
+% ------ sugerencia jugada
+
 sugerencia_jugada(Tablero,Turno,Nivel,F,C,D):-
     tamano_tablero(Tablero, N),
     findall([F1,C1,D1,T2,Turno1,Celdas1],(
@@ -586,4 +566,4 @@ sugerencia_jugada(Tablero,Turno,Nivel,F,C,D):-
         ), Jugadas),
     mejor_jugada(Jugadas, Turno, Nivel, [F, C, D, _, _, _]).
 
-
+% ------ sugerencia jugada
